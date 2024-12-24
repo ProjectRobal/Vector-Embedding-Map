@@ -1,13 +1,24 @@
 import numpy as np
 
 class MapElement:
+    '''
+     A map element that store value with coresponding vector and it's precomputed metric from reference vector.
+    '''
     def __init__(self,vec:np.ndarray,dist:float,val):
         self.vec = vec
         self.val = val
         self.dist = dist
 
 class CosEmbeddedMap:
+    '''
+     A data structure that holds data using embedded vectors. 
+    For faster retrieval we use precomputed dot product with reference vector of eculidan distance of 1.0.
+    
+    '''
     def __init__(self,vec_size:int = 160):
+        '''
+         vec_size - a vector size for vectors used by data structure.
+        '''
                 
         self.ref_vector = np.ones(vec_size,dtype=np.float32)*0.07905694150420949
                 
@@ -17,6 +28,15 @@ class CosEmbeddedMap:
         self._min_val = 0
         
     def push(self,vec:np.ndarray,val):
+        '''
+        It push value with it's corresponding vector to data structure.
+        If value is find with similar vector it is overwritten by incoming value.
+        
+         vec - a vector corresponding to incoming value
+         val - an incoming value
+         
+        return True if overwrite ocurred, False otherwise.
+        '''
         
         dist_cos = np.dot(vec,self.ref_vector)
         
@@ -47,6 +67,13 @@ class CosEmbeddedMap:
         return False    
             
     def search(self,vec:np.ndarray)->MapElement|None:  
+        '''
+        Function that search element with similar vector in structure.
+        
+        vec - a vector used for searching  
+        
+        return element with similar vector as MapElement type, None otherwise is returned.
+        '''
         
         if len(self.data) == 0:
             return None 
@@ -82,7 +109,14 @@ class CosEmbeddedMap:
             
         return None
     
-    def remove(self,elem):
+    def remove(self,elem:MapElement):
+        '''
+         Remove element form data structure.
+         
+        elem - element we want to remove, instance of MapElement
+        
+        return False if element wasn't removed, True otherwise.
+        '''
         
         if len(self.data) == 0:
             return False
